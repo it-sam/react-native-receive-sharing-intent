@@ -68,8 +68,6 @@ public class ReceiveSharingIntentHelper {
                 file.putString("extension", null);
                 files.putMap("0",file);
                 promise.resolve(files);
-            }else{
-                promise.reject("error","Invalid file type.");
             }else if(type.startsWith("text")){
                 String text = null;
                 try{
@@ -95,6 +93,8 @@ public class ReceiveSharingIntentHelper {
                     files.putMap("0",file);
                     promise.resolve(files);
                 }
+            }else{
+                promise.reject("error","Invalid file type.");
             }
         }catch (Exception e){
             promise.reject("error",e.toString());
