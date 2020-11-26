@@ -55,7 +55,7 @@ public class ReceiveSharingIntentHelper {
                     promise.resolve(files);
                 }
 
-            }else if(Objects.equals(action, Intent.ACTION_VIEW)){
+            }  else if(Objects.equals(action, Intent.ACTION_VIEW)){
                 String link = intent.getDataString();
                 WritableMap files = new WritableNativeMap();
                 WritableMap file = new WritableNativeMap();
@@ -70,6 +70,31 @@ public class ReceiveSharingIntentHelper {
                 promise.resolve(files);
             }else{
                 promise.reject("error","Invalid file type.");
+            }else if(type.startsWith("text")){
+                String text = null;
+                try{
+                    text = intent.getStringExtra(Intent.EXTRA_TEXT);
+                }catch (Exception ignored){ }
+                if(text == null){
+                    WritableMap files = getMediaUris(intent,context);
+                    promise.resolve(files);
+                }else{
+                    WritableMap files = new WritableNativeMap();
+                    WritableMap file = new WritableNativeMap();
+                    file.putString("contentUri",null);
+                    file.putString("filePath", null);
+                    file.putString("fileName", null);
+                    file.putString("extension", null);
+                    if(text.startsWith("http")){
+                        file.putString("weblink", text);
+                        file.putString("text",null);
+                    }else{
+                        file.putString("weblink", null);
+                        file.putString("text",text);
+                    }
+                    files.putMap("0",file);
+                    promise.resolve(files);
+                }
             }
         }catch (Exception e){
             promise.reject("error",e.toString());
